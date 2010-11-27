@@ -24,8 +24,13 @@ SymSubtitles.prototype.current = function(property) {
 }
 
 SymSubtitles.prototype.seek = function(time) {
-	if( this.lines.length < 1) {
+	if( this.lines.length < 1 ) {
 		this.currentLine = -1;
+		return this;
+	}
+	
+	// Do nothing if the line is synced
+	if ( this.currentLine >= 0 && this.lines[this.currentLine].start < time && time < this.lines[this.currentLine].end ) {
 		return this;
 	}
 	
