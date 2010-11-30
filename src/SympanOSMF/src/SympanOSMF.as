@@ -1,8 +1,10 @@
 package
 {
+	import flash.display.GradientType;
 	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
+	import flash.geom.Matrix;
 	
 	import org.osmf.containers.MediaContainer;
 	import org.osmf.media.DefaultMediaFactory;
@@ -11,26 +13,27 @@ package
 	import org.osmf.media.MediaPlayer;
 	import org.osmf.media.URLResource;
 	
-	[SWF(width="640", height="360", backgroundColor="#000000")]
+	[SWF(width="640", height="390", backgroundColor="#000000")]
 	public class SympanOSMF extends Sprite
 	{
-		private static const SIZE:Number = 100;
-		private static const X:Number = 320;
-		private static const Y:Number = 190;
-		private static const F:Number = 1.2;
+		private static var CANVAS_WIDTH:uint = 640;
+		private static var CANVAS_HEIHGT:uint = 390;
+		private static var CBAR_HEIGHT:uint = 30;
+		private static var BTN_WIDTH:uint = 40;
 		
 		private var container:MediaContainer;
 		private var mediaFactory:MediaFactory;
 		private var resource:URLResource;
 		private var mediaElement:MediaElement;
 		private var mediaPlayer:MediaPlayer;
-		private var playButton:Sprite;
+		
+		private var controlsBar:Sprite;
 		
 		public function SympanOSMF(url:String="http://media09.vbox7.com/s/60/60d14d9d.flv")
 		{
 			container = new MediaContainer();
-			container.width = 640;
-			container.height = 360;
+			container.width = CANVAS_WIDTH;
+			container.height = CANVAS_HEIHGT - CBAR_HEIGHT;
 			addChild(container);
 			
 			mediaFactory = new DefaultMediaFactory();
@@ -44,27 +47,26 @@ package
 			mediaPlayer.media = mediaElement;
 			mediaPlayer.pause();
 			
-			playButton = renderPlayButton();
-			addChild(playButton);
+			controlsBar = renderControlsBar();
 			
-			playButton.addEventListener(MouseEvent.CLICK, togglePlayingState);
+			addChild(controlsBar);
+			
 			container.addEventListener(MouseEvent.CLICK, togglePlayingState);
 		}
 		
-		private function renderPlayButton():Sprite
+		private function renderControlsBar():Sprite
 		{
-			var button:Sprite = new Sprite();
-			var g:Graphics = button.graphics;
+			var cbar:Sprite = new Sprite();
+			var g:Graphics = cbar.graphics;
 			
-			g.lineStyle(1, 0, 0.5);
-			g.beginFill(0xA0A0A0, 0.5);
-			g.moveTo(X - SIZE / F, Y - SIZE);
-			g.lineTo(X + SIZE / F, Y);
-			g.lineTo(X - SIZE / F, Y + SIZE);
-			g.lineTo(X - SIZE / F, Y - SIZE);
+			var gradientMatrix:Matrix = new Matrix();
+			gradientMatrix.createGradientBox(CANVAS_WIDTH, CBAR_HEIGHT, Math.PI / 2, 0, CANVAS_HEIHGT - CBAR_HEIGHT);
+			
+			g.beginGradientFill(GradientType.LINEAR, [0x666666, 0x000000], [1, 1], [0x00, 0xFF], gradientMatrix);
+			g.drawRect(0, CANVAS_HEIHGT - CBAR_HEIGHT, CANVAS_WIDTH, CBAR_HEIGHT);
 			g.endFill();
 			
-			return button;
+			return cbar;
 		}
 		
 		private function togglePlayingState(event:MouseEvent):void
@@ -72,10 +74,8 @@ package
 			if (mediaPlayer.playing)
 			{
 				mediaPlayer.pause();
-				addChild(playButton);
 			} else {
 				mediaPlayer.play();
-				removeChild(playButton);
 			}
 		}
 	}
