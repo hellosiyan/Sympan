@@ -73,14 +73,15 @@
 
 	SymSubtitles.prototype.fromString = function(string) {
 		var result = [];
-		var blocks = string.split(/\n\n[^\n]/);
+		var blocks = string.replace(/\n+$/, '').split(/\n{2,}/);
 		for( index in blocks ) {
-			block_line = blocks[index].split(/\n/)
+			block_line = blocks[index].split(/^(\d+)\n(.*?) --> (.*?)\n([\w\W]*)$/)
+			if (block_line.length < 6) continue;
 			result.push({
-				'index': block_line[0], 
-				'start': stringToSeconds(block_line[1].split(' --> ')[0]), 
-				'end': stringToSeconds(block_line[1].split(' --> ')[1]), 
-				'text': block_line.slice(2).join('<br />\n').replace(/(<br \/>\n)+$/, '')
+				'index': block_line[1], 
+				'start': stringToSeconds(block_line[2]), 
+				'end': stringToSeconds(block_line[3]), 
+				'text': block_line[4].replace('\n', '<br />\n')
 			});
 		}
 		this.lines = result;
