@@ -3,6 +3,7 @@ package
 	import flash.display.GradientType;
 	import flash.display.Graphics;
 	import flash.display.Sprite;
+	import flash.display.StageScaleMode;
 	import flash.events.MouseEvent;
 	import flash.geom.Matrix;
 	
@@ -13,11 +14,11 @@ package
 	import org.osmf.media.MediaPlayer;
 	import org.osmf.media.URLResource;
 	
-	[SWF(width="640", height="390", backgroundColor="#000000")]
+	[SWF(width="640", height="400", backgroundColor="#000000")]
 	public class SympanOSMF extends Sprite
 	{
 		private static var CANVAS_WIDTH:uint = 640;
-		private static var CANVAS_HEIHGT:uint = 390;
+		private static var CANVAS_HEIHGT:uint = 400;
 		private static var CBAR_HEIGHT:uint = 30;
 		private static var BTN_WIDTH:uint = 40;
 		
