@@ -71,5 +71,114 @@ return window.Sympan = window.sympan = Sympan;
 })()
 
 
+function _true() {
+	return true;
+}
+
+function _false() {
+	return false;
+}
+
+Sympan.Event = function(type) {
+	// Create event without using the 'new' keyword
+	if ( !this.preventDefault ) {
+		return new Sympan.Event( type );
+	}
+	
+	this.timestamp = (new Date()).getTime();
+	this.type = type
+};
+
+Sympan.Event.prototype = {
+	preventDefault: function() {
+		this.isDefaultPrevented = _true;
+	},
+	stopPropagation: function() {
+		this.isPropagationStopped = _true;
+	},
+	isDefaultPrevented: _false,
+	isPropagationStopped: _false
+};
+
+(function() {
+	Sympan.event = {
+		add: function(elem, type, callback) {
+			var events = Sympan.data(elem, "__event__");
+			
+			if( events === undefined ) {
+				events = {}
+			}
+			
+			if( events[type] === undefined ) {
+				events[type] = []
+			}
+			
+			events[type].push(callback);
+			Sympan.data(elem, "__event__", events);
+		},
+		
+		remove: function(elem, type, callback) {
+			var events = Sympan.data(elem, "__event__");
+			if( events === undefined || events[type] === undefined ) return;
+			
+			for ( i=0; i < events[type].length; i++ ) {
+				if ( events[type][i] === callback ) {
+					delete events[type][i]
+					break;
+				}
+			}
+		},
+		
+		trigger: function(elem, type) {
+			var events = Sympan.data(elem, "__event__");
+			if( events === undefined || events[type] === undefined ) return;
+			
+			var eventObject = Sympan.Event(type);
+			
+			eventObject.target = elem;
+			eventObject.timestamp = (new Date()).getTime();
+			
+			for ( i=0; i < events[type].length && !eventObject.isPropagationStopped(); i++ ) {
+				if ( events[type][i] && events[type][i](eventObject) === false ) {
+					break;
+				}
+			}
+		}
+	}
+	
+	Sympan.registerEvent = function (event) {
+		// Allow multiple event registration using " " as a separator
+		var events = event.split(" ")
+		
+		if(events.length <= 1) {
+			Sympan.fn[event] = function(callback) {
+				if( callback ) {
+					this.bind(event, callback);
+				} else {
+					this.trigger(event);
+				}
+			};
+		} else {
+			for ( i in events) {
+				Sympan.registerEvent(events[i]);
+			}
+		}
+	}
+	
+	
+	Sympan.fn.bind = function(event, callback) {
+		Sympan.event.add(this.elem, event, callback);
+	}
+	
+	Sympan.fn.unbind = function(event, callback) {
+		Sympan.event.remove(this.elem, event, callback);
+	}
+	
+	Sympan.fn.trigger = function(event) {
+		Sympan.event.trigger(this.elem, event);
+	}
+	
+	Sympan.registerEvent('onPlay onStop onSeek');
+})()
 
 })()
