@@ -9,7 +9,17 @@
 		function sympinit() {
 			var s = Sympan('myvid');
 			
-			console.log(s)
+			function test_data() {
+				s.data('current_time', new Date());
+				
+				var q1 = Sympan('myvid');
+				console.log(q1.data('current_time'))
+				q1.removeData('current_time');
+				
+				var q2 = Sympan('myvid');
+				console.log(q2.data('current_time'))
+			}
+			test_data();
 			
 			var vid = window.document.getElementById('myvid');
 			var subs = window.document.getElementById('subs');
