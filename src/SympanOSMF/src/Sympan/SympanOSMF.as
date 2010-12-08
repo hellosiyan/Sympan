@@ -1,9 +1,13 @@
-package
+package Sympan
 {
+	import Sympan.ControlBar;
+	
 	import flash.display.GradientType;
 	import flash.display.Graphics;
 	import flash.display.Sprite;
+	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
+	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Matrix;
 	
@@ -22,16 +26,19 @@ package
 		private static var CBAR_HEIGHT:uint = 30;
 		private static var BTN_WIDTH:uint = 40;
 		
-		private var container:MediaContainer;
+		public var container:MediaContainer;
 		private var mediaFactory:MediaFactory;
 		private var resource:URLResource;
 		private var mediaElement:MediaElement;
 		private var mediaPlayer:MediaPlayer;
 		
-		private var controlsBar:Sprite;
+		private var controlBar:ControlBar;
 		
 		public function SympanOSMF(url:String="http://media09.vbox7.com/s/60/60d14d9d.flv")
 		{
+			stage.scaleMode = StageScaleMode.NO_SCALE;
+			stage.align = StageAlign.TOP_LEFT;
+			
 			container = new MediaContainer();
 			container.width = CANVAS_WIDTH;
 			container.height = CANVAS_HEIHGT - CBAR_HEIGHT;
@@ -48,11 +55,11 @@ package
 			mediaPlayer.media = mediaElement;
 			mediaPlayer.pause();
 			
-			controlsBar = renderControlsBar();
-			
-			addChild(controlsBar);
+			controlBar = new ControlBar();
+			addChild(controlBar);
 			
 			container.addEventListener(MouseEvent.CLICK, togglePlayingState);
+			addEventListener(Event.ADDED_TO_STAGE, onSympanAddedToStage);
 		}
 		
 		private function renderControlsBar():Sprite
@@ -78,6 +85,18 @@ package
 			} else {
 				mediaPlayer.play();
 			}
+		}
+		
+		private function onSympanAddedToStage(event:Event):void
+		{
+			this.stage.addEventListener(Event.RESIZE, onSympanResize);
+			this.stage.dispatchEvent(new Event(Event.RESIZE));
+		}
+		
+		private function onSympanResize(event:Event):void
+		{
+			container.width = stage.stageWidth;
+			container.height = stage.stageHeight;
 		}
 	}
 }
