@@ -28,9 +28,11 @@
 				}
 			
 				s.onPlay(sOnPlay);
-			
-				s.onPlay(function() {
-					console.log('callback 2');
+				
+				Sympan.each(['onPlay', 'onPause', 'onSeek'], function(i, event_type) {
+					s[event_type](function() {
+						console.log(event_type)
+					})
 				});
 			
 				var q = Sympan('myvid');
@@ -41,15 +43,14 @@
 			}
 			test_events();
 			
-			var vid = window.document.getElementById('myvid');
 			var subs = window.document.getElementById('subs');
 	
 			var srt = new SymSubtitles();
 			srt.fromString(srt_string);
 	
-			vid.addEventListener("timeupdate", function(time) {
-				subs.innerHTML = srt.seek(vid.currentTime).current('text');
-			}, true);
+			s.onProgress(function(e) {
+				subs.innerHTML = srt.seek(e.currentTime).current('text');
+			});
 		}
 	</script>
 </head>

@@ -9,11 +9,14 @@ Sympan.fn = Sympan.prototype = {
 	init: function(element_id) {
 		var elem = window.document.getElementById(element_id);
 		
-		if ( !elem ) {
+		if ( !elem || !elem.tagName || elem.tagName.toLowerCase() != 'video' ) {
+			// TODO: Allow 'audio', 'object' and 'href' tags
 			return false;
 		}
 		
 		this.elem = elem;
+		this.bindDOMEvents();
+		
 		return this;
 	}
 }
@@ -105,7 +108,7 @@ Sympan.each = function() {
 	Sympan.fn.removeData = function(key) {
 		return Sympan.removeData(this.elem, key);
 	}
-	
+
 })();
 
 
@@ -167,17 +170,18 @@ Sympan.Event.prototype = {
 			}
 		},
 		
-		trigger: function(elem, type) {
+		trigger: function(elem, type, data) {
 			var events = Sympan.data(elem, "__event__");
 			if( events === undefined || events[type] === undefined ) return;
 			
 			var eventObject = Sympan.Event(type);
 			
-			eventObject.target = elem;
+			eventObject.target = eventObject.currentTarget = elem;
 			eventObject.timestamp = (new Date()).getTime();
+			Sympan.extend(eventObject, data);
 			
 			for ( i=0; i < events[type].length && !eventObject.isPropagationStopped(); i++ ) {
-				if ( events[type][i] && events[type][i](eventObject) === false ) {
+				if ( events[type][i] && events[type][i].call(elem, eventObject) === false ) {
 					break;
 				}
 			}
@@ -212,11 +216,35 @@ Sympan.Event.prototype = {
 		Sympan.event.remove(this.elem, event, callback);
 	}
 	
-	Sympan.fn.trigger = function(event) {
-		Sympan.event.trigger(this.elem, event);
+	Sympan.fn.trigger = function(event, data) {
+		Sympan.event.trigger(this.elem, event, data);
 	}
 	
-	Sympan.registerEvent('onPlay onStop onSeek');
+	Sympan.registerEvent('onPlay onPause onProgress onSeek');
+})();
+
+(function() {
+	Sympan.fn.bindDOMEvents = function() {
+		var self = this;
+		
+		if( this.data('__dom_binded__') ) {
+			return;
+		} 
+		this.data('__dom_binded__', true);
+		
+		Sympan.each({
+			timeupdate: 'onProgress',
+			play: 'onPlay',
+			pause: 'onPause',
+			seeking: 'onSeek'
+		}, function(dom_event, sympan_event) {
+			self.elem.addEventListener(dom_event, function(time) {
+				self.trigger(sympan_event, {
+					currentTime: self.elem.currentTime
+				});
+			}, true);
+		});
+	};
 })();
 
 })();
