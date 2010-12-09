@@ -44,18 +44,21 @@
 			test_events();
 			
 			var subs = window.document.getElementById('subs');
-	
-			var srt = new SymSubtitles();
-			srt.fromString(srt_string);
-	
-			s.onProgress(function(e) {
-				subs.innerHTML = srt.seek(e.currentTime).current('text');
+			
+			s.subtitles().onUpdate(function(e) {
+				e.target.lines[0].text = 'Hello, world!';
+				e.target.lines[1].text = 'I\'m dynamically changed line!';
+			}).fromString(srt_string).onChange(function() {
+				subs.innerHTML = s.subtitles().current('text');
 			});
 		}
 	</script>
 </head>
 <body onload="sympinit()">
 	<video controls="controls" id="myvid" seekable height="400" fullscreen>
+		<source src="video.ogv" />
+	</video>
+	<video controls="controls" id="myvid2" seekable height="400" fullscreen>
 		<source src="video.ogv" />
 	</video>
 	<p id="subs"></p>

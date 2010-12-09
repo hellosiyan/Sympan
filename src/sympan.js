@@ -188,21 +188,47 @@ Sympan.Event.prototype = {
 		}
 	}
 	
-	Sympan.registerEvent = function (event) {
+	Sympan.registerEvent = function () {
+		var event = "", target = {};
+		
+		if ( arguments.length == 1 && typeof arguments[0] == 'string' ) {
+			target = Sympan.fn;
+			event = arguments[0];
+		} else if( arguments.length == 2 && typeof arguments[0] == 'object' && typeof arguments[1] == 'string' ) {
+			target = arguments[0];
+			event = arguments[1];
+		}
+		
 		// Allow multiple event registration using " " as a separator
 		var events = event.split(" ")
 		
 		if(events.length <= 1) {
-			Sympan.fn[event] = function(callback) {
+			// Implement the Event Dispatcher interface if not already done
+			Sympan.each({
+				bind: 'add',
+				unbind: 'remove',
+				trigger: 'trigger'
+			}, function(public_method, event_method) {
+				if( target[public_method] !== undefined ) {
+					// Don't override exiting implementations
+					return false;
+				}
+				target[public_method] = function(event, arg) {
+					Sympan.event[event_method](this, event, arg);
+				}
+			});
+		
+			target[event] = function(callback) {
 				if( callback ) {
 					this.bind(event, callback);
 				} else {
 					this.trigger(event);
 				}
+				return this;
 			};
 		} else {
 			for ( i in events) {
-				Sympan.registerEvent(events[i]);
+				Sympan.registerEvent(target, events[i]);
 			}
 		}
 	}
@@ -217,6 +243,7 @@ Sympan.Event.prototype = {
 	}
 	
 	Sympan.fn.trigger = function(event, data) {
+		Sympan.extend(data, {target: this});
 		Sympan.event.trigger(this.elem, event, data);
 	}
 	
