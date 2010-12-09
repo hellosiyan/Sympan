@@ -21,6 +21,44 @@ Sympan.fn = Sympan.prototype = {
 return window.Sympan = window.sympan = Sympan;
 })();
 
+Sympan.extend = function() {
+	var index, target = {}, data = {}
+		
+	if ( arguments.length == 1 && typeof this === 'object' ) {
+		// Extend *this* with data given as first arg
+		target = this;
+		data = arguments[0];
+	} else if ( arguments.length > 1 && typeof arguments[0] === 'object' && typeof arguments[1] === 'object' ) {
+		// Extend the object given as first arg with data from the second arg
+		target = arguments[0];
+		data = arguments[1];
+	}
+	
+	for ( index in data ) {
+		if ( data[index] === undefined ) continue;
+		target[index] = data[index];
+	}
+};
+
+Sympan.each = function() {
+	var index, target = {}, callback = function() {}
+		
+	if ( arguments.length == 1 && typeof this === 'function' ) {
+		target = this;
+		callback = arguments[0];
+	} else if ( arguments.length > 1 && typeof arguments[0] === 'object' && typeof arguments[1] === 'function' ) {
+		target = arguments[0];
+		callback = arguments[1];
+	}
+	
+	for ( index in target ) {
+		if ( target[index] === undefined ) continue;
+		if ( callback.call(target[index], index, target[index]) === false ) {
+			break;			
+		}
+	}
+};
+
 (function() {
 	// Unique id generator for new objects in the cache
 	Sympan.uid = 0;
@@ -68,16 +106,16 @@ return window.Sympan = window.sympan = Sympan;
 		return Sympan.removeData(this.elem, key);
 	}
 	
-})()
+})();
 
 
 function _true() {
 	return true;
-}
+};
 
 function _false() {
 	return false;
-}
+};
 
 Sympan.Event = function(type) {
 	// Create event without using the 'new' keyword
@@ -179,6 +217,6 @@ Sympan.Event.prototype = {
 	}
 	
 	Sympan.registerEvent('onPlay onStop onSeek');
-})()
+})();
 
-})()
+})();
