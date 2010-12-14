@@ -18,15 +18,14 @@ package Sympan
 	import org.osmf.media.MediaPlayer;
 	import org.osmf.media.URLResource;
 	
-	[SWF(width="640", height="400", backgroundColor="#000000")]
+	[SWF(width="640", height="360", backgroundColor="#000000")]
 	public class SympanOSMF extends Sprite
 	{
 		private static var CANVAS_WIDTH:uint = 640;
-		private static var CANVAS_HEIHGT:uint = 400;
+		private static var CANVAS_HEIHGT:uint = 360;
 		private static var CBAR_HEIGHT:uint = 30;
-		private static var BTN_WIDTH:uint = 40;
 		
-		public var container:MediaContainer;
+		private var container:MediaContainer;
 		private var mediaFactory:MediaFactory;
 		private var resource:URLResource;
 		private var mediaElement:MediaElement;
@@ -41,7 +40,7 @@ package Sympan
 			
 			container = new MediaContainer();
 			container.width = CANVAS_WIDTH;
-			container.height = CANVAS_HEIHGT - CBAR_HEIGHT;
+			container.height = CANVAS_HEIHGT;
 			addChild(container);
 			
 			mediaFactory = new DefaultMediaFactory();
@@ -55,26 +54,11 @@ package Sympan
 			mediaPlayer.media = mediaElement;
 			mediaPlayer.pause();
 			
-			controlBar = new ControlBar();
+			controlBar = new ControlBar(mediaPlayer);
 			addChild(controlBar);
 			
 			container.addEventListener(MouseEvent.CLICK, togglePlayingState);
-			addEventListener(Event.ADDED_TO_STAGE, onSympanAddedToStage);
-		}
-		
-		private function renderControlsBar():Sprite
-		{
-			var cbar:Sprite = new Sprite();
-			var g:Graphics = cbar.graphics;
-			
-			var gradientMatrix:Matrix = new Matrix();
-			gradientMatrix.createGradientBox(CANVAS_WIDTH, CBAR_HEIGHT, Math.PI / 2, 0, CANVAS_HEIHGT - CBAR_HEIGHT);
-			
-			g.beginGradientFill(GradientType.LINEAR, [0x666666, 0x000000], [1, 1], [0x00, 0xFF], gradientMatrix);
-			g.drawRect(0, CANVAS_HEIHGT - CBAR_HEIGHT, CANVAS_WIDTH, CBAR_HEIGHT);
-			g.endFill();
-			
-			return cbar;
+			stage.addEventListener(Event.RESIZE, onSympanResize);
 		}
 		
 		private function togglePlayingState(event:MouseEvent):void
@@ -85,12 +69,6 @@ package Sympan
 			} else {
 				mediaPlayer.play();
 			}
-		}
-		
-		private function onSympanAddedToStage(event:Event):void
-		{
-			this.stage.addEventListener(Event.RESIZE, onSympanResize);
-			this.stage.dispatchEvent(new Event(Event.RESIZE));
 		}
 		
 		private function onSympanResize(event:Event):void
