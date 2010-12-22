@@ -3,6 +3,7 @@ package Sympan
 	import flash.display.BitmapData;
 	import flash.display.Graphics;
 	import flash.display.Sprite;
+	import flash.display.StageDisplayState;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -12,6 +13,7 @@ package Sympan
 	
 	import org.osmf.events.PlayEvent;
 	import org.osmf.media.MediaPlayer;
+	import org.osmf.net.SwitchingRuleBase;
 	
 	public class ControlBar extends Sprite
 	{
@@ -55,39 +57,42 @@ package Sympan
 		
 		public function ControlBar(mediaPlayer:MediaPlayer)
 		{
-			playButton = new Sprite();
+			//TODO: scale all button in reverse
 			
-			//TODO: find replacement for next line
-			//playButton.stage.scaleMode = StageScaleMode.NO_SCALE;
+			playButton = new Sprite();
 			playButton.width = 30;
 			playButton.height = 30;
 			playButton.x = 0;
 			playButton.y = 0;
 			playButton.buttonMode = true;
-			
 			var playButtonAsset:BitmapAsset = new PLAY_BUTTON();
 			playButton.graphics.beginBitmapFill(playButtonAsset.bitmapData);
 			playButton.graphics.drawRect(0, 0, 30, 30);
-			
 			playButton.addEventListener(MouseEvent.CLICK, onPlayButtonClick);
-			
 			addChild(playButton);
 			
 			pauseButton = new Sprite();
-			
-			//TODO: find replacement for next line
-			//pauseButton.stage.scaleMode = StageScaleMode.NO_SCALE;
 			pauseButton.width = 30;
 			pauseButton.height = 30;
 			pauseButton.x = 0;
 			pauseButton.y = 0;
 			pauseButton.buttonMode = true;
-			
 			var pauseButtonAsset:BitmapAsset = new PAUSE_BUTTON();
 			pauseButton.graphics.beginBitmapFill(pauseButtonAsset.bitmapData);
 			pauseButton.graphics.drawRect(0, 0, 30, 30);
-			
 			pauseButton.addEventListener(MouseEvent.CLICK, onPauseButtonClick);
+			
+			fullscreenButton = new Sprite();
+			fullscreenButton.width = 30;
+			fullscreenButton.height = 30;
+			fullscreenButton.x = 610;
+			fullscreenButton.y = 0;
+			fullscreenButton.buttonMode = true;
+			var fullscreenButtonAsset:BitmapAsset = new FULLSCREEN_BUTTON();
+			fullscreenButton.graphics.beginBitmapFill(fullscreenButtonAsset.bitmapData);
+			fullscreenButton.graphics.drawRect(0, 0, 30, 30);
+			fullscreenButton.addEventListener(MouseEvent.CLICK, onFullscreenButtonClick);
+			addChild(fullscreenButton);
 			
 			this.mediaPlayer = mediaPlayer;
 			this.mediaPlayer.addEventListener(PlayEvent.PLAY_STATE_CHANGE, onMediaPlayerPlayStateChange);
@@ -126,6 +131,18 @@ package Sympan
 			this.mediaPlayer.pause();
 		}
 		
+		private function onFullscreenButtonClick(event:MouseEvent):void
+		{
+			switch (this.parent.stage.displayState) {
+				case StageDisplayState.NORMAL:
+					this.parent.stage.displayState = StageDisplayState.FULL_SCREEN;
+					break;
+				case StageDisplayState.FULL_SCREEN:
+					this.parent.stage.displayState = StageDisplayState.NORMAL;
+					break;
+			}
+		}
+		
 		private function onEnterFrame(event:Event):void
 		{
 			drawControls();
@@ -151,7 +168,7 @@ package Sympan
 			var g:Graphics = this.graphics;
 			g.clear();
 			g.beginFill(0x000000, 0.75);
-			g.drawRect(0, 0, stage.width, HEIGHT);
+			g.drawRect(0, 0, stage.stageWidth, HEIGHT);
 			g.endFill();
 			
 			playButton.width = 30;
@@ -159,6 +176,10 @@ package Sympan
 			
 			pauseButton.width = 30;
 			pauseButton.height = 30;
+			
+			fullscreenButton.width = 30;
+			fullscreenButton.height = 30;
+			fullscreenButton.x = this.parent.stage.stageHeight - fullscreenButton.width;
 		}
 		
 		private function play():void
