@@ -247,7 +247,7 @@ Sympan.Event.prototype = {
 		Sympan.event.trigger(this.elem, event, data);
 	}
 	
-	Sympan.registerEvent('onPlay onPause onProgress onSeek');
+	Sympan.registerEvent('onPlay onPause onProgress onSeek onSourceChange');
 })();
 
 (function() {
@@ -272,6 +272,51 @@ Sympan.Event.prototype = {
 			}, true);
 		});
 	};
+	
+	Sympan.fn.showControls = function() {
+		if( arguments.length < 1 ) {
+			return this.elem.controls;
+		}
+		
+		this.elem.controls = arguments[0];
+		
+		return this;
+	}
+	
+	Sympan.fn.load = function( src ) {
+		var e = {
+			currentSource: this.elem.currentSrc,
+			newSource: src
+		};
+		
+		this.elem.src = src;
+		this.elem.load();
+		
+		this.trigger('onSourceChange', e);
+		
+		return this;
+	}
+	
+	Sympan.fn.play = function() {
+		if( arguments.length < 1 ) {
+			this.elem.play();
+		} else {
+	 		switch (typeof arguments[0] ) {
+	 			case 'string':
+	 				this.load(arguments[0]);
+	 				this.elem.play();
+	 			break;
+	 		}
+		}
+		
+		return this;
+	}
+	
+	Sympan.fn.pause = function() {
+		this.elem.pause();
+		
+		return this;
+	}
 })();
 
 })();

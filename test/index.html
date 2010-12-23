@@ -7,7 +7,7 @@
 	<script src="../src/sympan-subtitles.js" type="text/javascript" language="javascript" ></script>
 	<script type="text/javascript" language="javascript" charset="utf-8">
 		function sympinit() {
-			var s = Sympan('myvid');
+			s = Sympan('myvid');
 			
 			function test_data() {
 				s.data('current_time', new Date());
@@ -45,7 +45,9 @@
 			
 			var subs = window.document.getElementById('subs');
 			
-			s.subtitles().onUpdate(function(e) {
+			s.showControls(false).onSourceChange(function(e) {
+				console.log(e)
+			}).subtitles().onUpdate(function(e) {
 				e.target.lines[0].text = 'Hello, world!';
 				e.target.lines[1].text = 'I\'m dynamically changed line!';
 			}).fromString(srt_string).onChange(function() {
