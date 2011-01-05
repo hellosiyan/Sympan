@@ -6,6 +6,7 @@ package Sympan
 	import flash.display.StageDisplayState;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
+	import flash.events.FullScreenEvent;
 	import flash.events.MouseEvent;
 	
 	import mx.core.BitmapAsset;
@@ -145,30 +146,47 @@ package Sympan
 		
 		private function onEnterFrame(event:Event):void
 		{
-			drawControls();
+			var w:uint = event.currentTarget.parent.stage.stageWidth;
+			var h:uint = event.currentTarget.parent.stage.stageHeight;
+			
+			drawControls(w, h);
 			removeEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
 		
 		private function onAddedToStage(event:Event):void
 		{
-			drawControls();
+			var w:uint = event.currentTarget.parent.stage.stageWidth;
+			var h:uint = event.currentTarget.parent.stage.stageHeight;
+			
+			drawControls(w, h);
 			this.parent.stage.addEventListener(Event.RESIZE, onParentStageResize);
 		}
 		
 		private function onParentStageResize(event:Event):void
 		{
+			var w:uint = event.currentTarget.stageWidth;
+			var h:uint = event.currentTarget.stageHeight;
+			
 			this.width = event.currentTarget.stageWidth;
-			drawControls();
+			
+			drawControls(w, h);
 		}
 		
-		public function drawControls():void
+		public function drawControls(w:uint=0, h:uint=0):void
 		{
-			this.y = this.parent.stage.stageHeight - HEIGHT;
+			if (w == 0) {
+				w = this.parent.stage.stageWidth;
+			}
+			if (h == 0) {
+				h = this.parent.stage.stageHeight;
+			}
+			
+			this.y = h - HEIGHT;
 			
 			var g:Graphics = this.graphics;
 			g.clear();
 			g.beginFill(0x000000, 0.75);
-			g.drawRect(0, 0, stage.stageWidth, HEIGHT);
+			g.drawRect(0, 0, w, HEIGHT);
 			g.endFill();
 			
 			playButton.width = 30;
@@ -179,7 +197,7 @@ package Sympan
 			
 			fullscreenButton.width = 30;
 			fullscreenButton.height = 30;
-			fullscreenButton.x = this.parent.stage.stageHeight - fullscreenButton.width;
+			fullscreenButton.x = w - fullscreenButton.width;
 		}
 		
 		private function play():void
