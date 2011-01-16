@@ -1,0 +1,37 @@
+<html>
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<title>Video</title>
+	<link rel="stylesheet" href="style.css" type="text/css" media="screen" />
+	
+	<script src="../src/sympan.js" type="text/javascript" language="javascript" ></script>
+	<script src="../src/sympan-subtitles.js" type="text/javascript" language="javascript" ></script>
+	
+	<script src="media/jquery.js" type="text/javascript" language="javascript" ></script>
+	
+	<script type="text/javascript" language="javascript" charset="utf-8">
+		jQuery(document).ready(function($) {
+			var s = Sympan('myvid');
+		});
+	</script>
+</head>
+<body>
+<div class="wrapper">
+	<h1><a href="index.html">Sympan Media ~ Construction Lot</a></h1>
+	<div class="body">
+		<h2>Basic Usage ~</h2>
+		<div class="fl col-left">
+			<video controls="controls" id="myvid" seekable height="300" fullscreen>
+				<source src="video.ogv" />
+			</video>
+			<p id="subs"><span></span></p>
+		</div>
+		<div class="fl col-right">
+			<!-- TODO: Add detailed description -->
+			<p>Simple use case</p>
+		</div>
+		<div class="cl">&nbsp;</div>
+	</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,203 @@
+<html>
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<title>Video</title>
+	<link rel="stylesheet" href="style.css" type="text/css" media="screen" />
+	
+	<script src="../src/sympan.js" type="text/javascript" language="javascript" ></script>
+	<script src="../src/sympan-subtitles.js" type="text/javascript" language="javascript" ></script>
+	
+	<script src="media/jquery.js" type="text/javascript" language="javascript" ></script>
+	
+	<script type="text/javascript" language="javascript" charset="utf-8">
+		jQuery(document).ready(function($) {
+			var s = Sympan('myvid');
+			
+			var subs = $('#subs span');
+			
+			s.defaultControls(false).onPlay(function() {
+				$('.toggle-play').text('[pause]')
+			}).onPause(function() {
+				$('.toggle-play').text('[play]')
+			}).subtitles().onUpdate(function(e) {
+				e.target.lines[0].text = '~ Hello, world!';
+				e.target.lines[1].text = '~ this line changes<br/>\ndynamically after update!';
+			}).fromString($('#txt_subtitles').text()).onChange(function() {
+				subs.html(s.subtitles().current('text'));
+			});
+			
+			$('.toggle-play').click(function() {
+				if ( s.playing() ) {
+					s.pause();
+					$(this).text('[play]')
+				} else {
+					s.play();
+					$(this).text('[pause]')
+				}
+				return false;
+			});
+			
+			$('.toggle-controls').click(function() {
+				if ( s.defaultControls() ) {
+					s.defaultControls( false );
+					$(this).text('[show controls]')
+				} else {
+					s.defaultControls( true );
+					$(this).text('[hide controls]')
+				}
+				
+				return false;
+			});
+			
+			$('.update-subtitles').click(function() {
+				s.subtitles().fromString($('#txt_subtitles').val());
+			});
+			
+		});
+	</script>
+</head>
+<body>
+<div class="wrapper">
+	<h1><a href="index.html">Sympan Media ~ Construction Lot</a></h1>
+	<div class="body">
+		<h2>Subtitles ~</h2>
+		<div class="fl col-left video-container">
+			<video controls="controls" id="myvid" seekable height="300" fullscreen>
+				<source src="video.ogv" />
+			</video>
+			<p id="subs"><span></span></p>
+		</div>
+		<div class="fl col-right">
+			<p>
+				<a class="toggle-play" href="#">[play]</a>
+				<a class="toggle-controls" href="#">[show controls]</a>
+			</p>
+			<p>
+				<a class="update-subtitles" href="#">[update subtitles]</a>
+				<textarea id="txt_subtitles">1
+00:00:00,388 --> 00:00:02,158
+Искам само да ти кажа,
+
+2
+00:00:02,381 --> 00:00:04,256
+че обичам нежния ти смях.
+
+3
+00:00:04,322 --> 00:00:07,587
+Искам да те извися и да отнема болката ти...
+
+4
+00:00:07,645 --> 00:00:08,568
+някъде далеч.
+
+5
+00:00:08,622 --> 00:00:10,656
+Пазя снимката ти
+
+6
+00:00:10,725 --> 00:00:12,595
+и знам, че така те помня.
+
+7
+00:00:12,671 --> 00:00:16,295
+Искам да те извися и да отнема болката ти,
+
+8
+00:00:16,360 --> 00:00:20,410
+че когато съм самотен съм като развалина
+
+9
+00:00:20,471 --> 00:00:24,949
+и не се чувствам добре, когато си далече.
+
+10
+00:00:26,243 --> 00:00:28,269
+Отиде си далеч...
+
+11
+00:00:28,478 --> 00:00:32,054
+и вече не ме чувстваш тук.
+
+12
+00:00:33,626 --> 00:00:35,704
+Най-лошото вече свърши
+
+13
+00:00:35,793 --> 00:00:37,827
+и можем пак да дишаме свободно!
+
+14
+00:00:37,928 --> 00:00:39,501
+Иска ми се да те извися -
+
+15
+00:00:39,563 --> 00:00:42,198
+ти отнемаш болката ми надалеч.
+
+16
+00:00:42,254 --> 00:00:44,159
+Има още толкова да учим
+
+17
+00:00:44,217 --> 00:00:46,281
+и никого с кого още да се борим.
+
+18
+00:00:46,337 --> 00:00:49,680
+Искам да те извися и да отнема болката ти,
+
+19
+00:00:49,726 --> 00:00:53,996
+че съм като развалина, когато съм открит
+
+20
+00:00:54,053 --> 00:00:58,045
+и не се чувствам достатъчно силен.
+
+21
+00:00:58,141 --> 00:01:02,156
+Че когато съм самотен съм като развалина
+
+22
+00:01:02,214 --> 00:01:07,001
+и не се чувствам добре, когато си далече.
+
+23
+00:01:23,101 --> 00:01:27,245
+Че съм като развалина, когато съм открит
+
+24
+00:01:27,311 --> 00:01:31,305
+и не се чувствам достатъчно силен.
+
+25
+00:01:31,371 --> 00:01:35,549
+Че когато съм самотен съм като развалина
+
+26
+00:01:35,619 --> 00:01:39,995
+и не се чувствам добре, когато си далече.
+
+27
+00:01:48,158 --> 00:01:52,274
+Че когато съм самотен съм като развалина
+
+28
+00:01:52,345 --> 00:01:57,461
+и не се чувствам добре, когато си далече.
+
+29
+00:01:58,325 --> 00:02:00,146
+Отиде си далеч.
+
+30
+00:02:00,528 --> 00:02:04,825
+Вече не ме чувстваш тук.
+</textarea>
+			</p>
+		</div>
+		<div class="cl">&nbsp;</div>
+	</div>
+</div>
+</body>
+</html>

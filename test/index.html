@@ -2,193 +2,22 @@
 <head>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 	<title>Video</title>
+	<link rel="stylesheet" href="style.css" type="text/css" media="screen" />
 	
 	<script src="../src/sympan.js" type="text/javascript" language="javascript" ></script>
 	<script src="../src/sympan-subtitles.js" type="text/javascript" language="javascript" ></script>
-	<script type="text/javascript" language="javascript" charset="utf-8">
-		function sympinit() {
-			s = Sympan('myvid');
-			
-			function test_data() {
-				s.data('current_time', new Date());
-				
-				var q1 = Sympan('myvid');
-				console.log(q1.data('current_time'))
-				q1.removeData('current_time');
-				
-				var q2 = Sympan('myvid');
-				console.log(q2.data('current_time'))
-			}
-			test_data();
-			
-			function test_events() {
-				var sOnPlay = function(e) {
-					console.log('callback 1')
-					e.stopPropagation();
-				}
-			
-				s.onPlay(sOnPlay);
-				
-				Sympan.each(['onPlay', 'onPause', 'onSeek'], function(i, event_type) {
-					s[event_type](function() {
-						console.log(event_type)
-					})
-				});
-			
-				var q = Sympan('myvid');
-			
-				q.onPlay();
-				q.unbind('onPlay', sOnPlay);
-				q.trigger('onPlay');
-			}
-			test_events();
-			
-			var subs = window.document.getElementById('subs');
-			
-			s.showControls(false).onSourceChange(function(e) {
-				console.log(e)
-			}).subtitles().onUpdate(function(e) {
-				e.target.lines[0].text = 'Hello, world!';
-				e.target.lines[1].text = 'I\'m dynamically changed line!';
-			}).fromString(srt_string).onChange(function() {
-				subs.innerHTML = s.subtitles().current('text');
-			});
-		}
-	</script>
 </head>
-<body onload="sympinit()">
-	<video controls="controls" id="myvid" seekable height="400" fullscreen>
-		<source src="video.ogv" />
-	</video>
-	<video controls="controls" id="myvid2" seekable height="400" fullscreen>
-		<source src="video.ogv" />
-	</video>
-	<p id="subs"></p>
-	<script type="text/javascript" language="javascript" charset="utf-8">
-		// SRT for testing purposes
-		window.srt_string = "1\n\
-00:00:01,388 --> 00:00:02,158\n\
-Искам само да ти кажа,\n\
-SECOND LINE HERE,\n\
-\n\
-2\n\
-00:00:02,158 --> 00:00:04,322\n\
-че обичам нежния ти смях.\n\
-\n\
-3\n\
-00:00:04,322 --> 00:00:07,645\n\
-Искам да те извися и да отнема болката ти...\n\
-\n\
-4\n\
-00:00:07,645 --> 00:00:08,568\n\
-някъде далеч.\n\
-\n\
-5\n\
-00:00:08,622 --> 00:00:10,656\n\
-Пазя снимката ти\n\
-\n\
-6\n\
-00:00:10,725 --> 00:00:12,595\n\
-и знам, че така те помня.\n\
-\n\
-8\n\
-00:00:13,360 --> 00:00:16,410\n\
-че когато съм самотен съм като развалина\n\
-\n\
-9\n\
-00:00:20,471 --> 00:00:24,949\n\
-и не се чувствам добре, когато си далече.\n\
-\n\
-10\n\
-00:00:26,243 --> 00:00:28,269\n\
-Отиде си далеч...\n\
-\n\
-11\n\
-00:00:28,478 --> 00:00:32,054\n\
-и вече не ме чувстваш тук.\n\
-\n\
-12\n\
-00:00:33,626 --> 00:00:35,704\n\
-Най-лошото вече свърши\n\
-\n\
-13\n\
-00:00:35,793 --> 00:00:37,827\n\
-и можем пак да дишаме свободно!\n\
-\n\
-14\n\
-00:00:37,928 --> 00:00:39,501\n\
-Иска ми се да те извися -\n\
-\n\
-15\n\
-00:00:39,563 --> 00:00:42,198\n\
-ти отнемаш болката ми надалеч.\n\
-\n\
-16\n\
-00:00:42,254 --> 00:00:44,159\n\
-Има още толкова да учим\n\
-\n\
-17\n\
-00:00:44,217 --> 00:00:46,281\n\
-и никого с кого още да се борим.\n\
-\n\
-18\n\
-00:00:46,337 --> 00:00:49,680\n\
-Искам да те извися и да отнема болката ти,\n\
-\n\
-19\n\
-00:00:49,726 --> 00:00:53,996\n\
-че съм като развалина, когато съм открит\n\
-\n\
-20\n\
-00:00:54,053 --> 00:00:58,045\n\
-и не се чувствам достатъчно силен.\n\
-\n\
-21\n\
-00:00:58,141 --> 00:01:02,156\n\
-Че когато съм самотен съм като развалина\n\
-\n\
-22\n\
-00:01:02,214 --> 00:01:07,001\n\
-и не се чувствам добре, когато си далече.\n\
-\n\
-23\n\
-00:01:23,101 --> 00:01:27,245\n\
-Че съм като развалина, когато съм открит\n\
-\n\
-24\n\
-00:01:27,311 --> 00:01:31,305\n\
-и не се чувствам достатъчно силен.\n\
-\n\
-25\n\
-00:01:31,371 --> 00:01:35,549\n\
-Че когато съм самотен съм като развалина\n\
-\n\
-26\n\
-00:01:35,619 --> 00:01:39,995\n\
-и не се чувствам добре, когато си далече.\n\
-\n\
-27\n\
-00:01:48,158 --> 00:01:52,274\n\
-Че когато съм самотен съм като развалина\n\
-\n\
-28\n\
-00:01:52,345 --> 00:01:57,461\n\
-и не се чувствам добре, когато си далече.\n\
-\n\
-29\n\
-00:01:58,325 --> 00:02:00,146\n\
-Отиде си далеч.\n\
-\n\
-\n\
-\n\
-\n\
-30\n\
-00:02:00,528 --> 00:02:04,825\n\
-Вече не ме чувстваш тук.\n\
-\n\
-\n\
-\n\
-";
-	</script>
+<body>
+<div class="wrapper">
+	<h1>Sympan Media ~ Construction Lot</h1>
+	<div class="body">
+		<h2>Index ~</h2>
+		<p>Choose your working place:</p>
+		<ul>
+			<li><a href="basic.html">Basic usage</a></li>
+			<li><a href="controls.html">Custom Controls</a></li>
+			<li><a href="subtitles.html">Subtitles</a></li>
+		</uL>
+	</div>
 </body>
 </html>
