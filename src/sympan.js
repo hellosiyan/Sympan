@@ -243,11 +243,12 @@ Sympan.Event.prototype = {
 	}
 	
 	Sympan.fn.trigger = function(event, data) {
+		data = data || {};
 		Sympan.extend(data, {target: this});
 		Sympan.event.trigger(this.elem, event, data);
 	}
 	
-	Sympan.registerEvent('onPlay onPause onProgress onSeek onSourceChange');
+	Sympan.registerEvent('onPlay onPause onProgress onSeek onSourceChange onVolumeChange onLoadStart onLoadProgress onReady');
 })();
 
 (function() {
@@ -267,13 +268,38 @@ Sympan.Event.prototype = {
 		}, function(dom_event, sympan_event) {
 			self.elem.addEventListener(dom_event, function(time) {
 				self.trigger(sympan_event, {
-					currentTime: self.elem.currentTime
+					currentTime: self.elem.currentTime,
+					duration: self.duration()
 				});
 			}, true);
 		});
+		
+		self.elem.addEventListener('volumechange', function(e) {
+			self.trigger('onVolumeChange', {
+				volume: self.elem.volume,
+				muted: self.elem.muted
+			})
+		}, true);
+		
+		self.elem.addEventListener('loadstart', function(e) {
+			self.trigger('onLoadStart');
+		}, true);
+		
+		self.data('__buffer_end__', 0)
+		self.elem.addEventListener('progress', function(e) {
+			if( e.total > 0 ) {
+			  self.data('__buffer_end__', (e.loaded / e.total) * self.duration());
+			}
+				
+			self.trigger('onLoadProgress');
+		}, true);
+		
+		self.elem.addEventListener('loadeddata', function(e) {
+			self.trigger('onReady');
+		}, true);
 	};
 	
-	Sympan.fn.showControls = function() {
+	Sympan.fn.defaultControls = function() {
 		if( arguments.length < 1 ) {
 			return this.elem.controls;
 		}
@@ -281,6 +307,35 @@ Sympan.Event.prototype = {
 		this.elem.controls = arguments[0];
 		
 		return this;
+	}
+	
+	Sympan.fn.volume = function() {
+		if( arguments.length < 1 ) {
+			return this.elem.volume;
+		}
+		
+		this.elem.volume = arguments[0];
+		
+		return this;
+	}
+	
+	Sympan.fn.buffered = function() {
+		if( this.elem.buffered === undefined ) {
+			return this.data('__buffer_end__');
+		}
+		try {
+			return this.elem.buffered.end(0);
+		} catch (e) {
+			return 0;
+		}
+	};
+	
+	Sympan.fn.duration = function() {
+		if( !this.elem.duration ) {
+			return 0;
+		}
+		
+		return this.elem.duration;
 	}
 	
 	Sympan.fn.load = function( src ) {
@@ -302,6 +357,10 @@ Sympan.Event.prototype = {
 			this.elem.play();
 		} else {
 	 		switch (typeof arguments[0] ) {
+	 			case 'boolean':
+	 				if( arguments[0] ) this.play();
+	 				else this.pause();
+ 				break;
 	 			case 'string':
 	 				this.load(arguments[0]);
 	 				this.elem.play();
@@ -312,10 +371,26 @@ Sympan.Event.prototype = {
 		return this;
 	}
 	
+	Sympan.fn.seek = function(time) {
+		time = Math.min(Math.max(time, 0), this.duration() - 0.5);
+		
+		this.elem.currentTime = time;
+		
+		return this;
+	}
+	
 	Sympan.fn.pause = function() {
 		this.elem.pause();
 		
 		return this;
+	}
+	
+	Sympan.fn.playing = function() {
+		return !this.paused();
+	}
+	
+	Sympan.fn.paused = function() {
+		return this.elem.paused;
 	}
 })();
 
